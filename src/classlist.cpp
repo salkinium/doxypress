@@ -19,6 +19,7 @@
 *
 *************************************************************************/
 
+#include <stringmap.h>
 #include <classlist.h>
 
 #include <arguments.h>
@@ -34,13 +35,13 @@ static int compItems(const QSharedPointer<ClassDef> &c1, const QSharedPointer<Cl
    static const bool sortByScopeName = Config::getBool("sort-by-scope-name");
 
    if (sortByScopeName) {
-      return c1->name().compare(c2->name(), Qt::CaseInsensitive);
+      return StringCompare::compareNoCase(c1->name(), c2->name());
 
    } else {
-      int compareResult = c1->className().compare(c2->className(), Qt::CaseInsensitive);
+      int compareResult = StringCompare::compareNoCase(c1->className(), c2->className());
 
       if (compareResult == 0) {
-         return c1->name().compare(c2->name(), Qt::CaseInsensitive);
+         return StringCompare::compareNoCase(c1->name(), c2->name());
       } else {
          return compareResult;
       }

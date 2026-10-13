@@ -19,6 +19,7 @@
 *
 *************************************************************************/
 
+#include <stringmap.h>
 #include <index.h>
 
 #include <config.h>
@@ -342,10 +343,10 @@ class MemberIndexList : public QList<QSharedPointer<MemberDef>>
    { }
 
    static bool compareValues(const QSharedPointer<MemberDef> md1, const QSharedPointer<MemberDef> md2) {
-      int result = md1->name().compare(md2->name(), Qt::CaseInsensitive);
+      int result = StringCompare::compareNoCase(md1->name(), md2->name());
 
       if (result == 0) {
-         result = md1->qualifiedName().compare(md2->qualifiedName(), Qt::CaseInsensitive);
+         result = StringCompare::compareNoCase(md1->qualifiedName(), md2->qualifiedName());
       }
 
       return result < 0;
@@ -1876,7 +1877,7 @@ class PrefixIgnoreClassList : public SortedList<QSharedPointer<ClassDef>>
       QString tmp1 = n1.mid( getPrefixIndex(n1) );
       QString tmp2 = n2.mid( getPrefixIndex(n2) );
 
-      int i = tmp1.compare(tmp2, Qt::CaseInsensitive);
+      int i = StringCompare::compareNoCase(tmp1, tmp2);
 
       return i < 0;
    }

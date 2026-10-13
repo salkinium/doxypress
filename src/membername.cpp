@@ -19,6 +19,7 @@
 *
 *************************************************************************/
 
+#include <stringmap.h>
 #include <membername.h>
 
 #include <util.h>
@@ -82,7 +83,7 @@ int MemberNameSDict::compareMapValues(const QSharedPointer<MemberName> &n1, cons
    QString tmp1 = name1.mid( getPrefixIndex(name1) );
    QString tmp2 = name2.mid( getPrefixIndex(name2) );
      
-   int i = tmp1.compare(tmp2, Qt::CaseInsensitive);
+   int i = StringCompare::compareNoCase(tmp1, tmp2);
 
    return i;
 }

@@ -33,17 +33,17 @@
 
 int ConceptSDict::compareMapValues(const QSharedPointer<ConceptDef> &item1, const QSharedPointer<ConceptDef> &item2) const
 {
-   return item1->name().compare(item2->name(), Qt::CaseInsensitive);
+   return StringCompare::compareNoCase(item1->name(), item2->name());
 }
 
 int DirSDict::compareMapValues(const QSharedPointer<DirDef> &item1, const QSharedPointer<DirDef> &item2) const
 {
-   return item1->shortName().compare(item2->shortName(), Qt::CaseInsensitive);
+   return StringCompare::compareNoCase(item1->shortName(), item2->shortName());
 }
 
 int ExampleSDict::compareMapValues(const QSharedPointer<Example> &item1, const QSharedPointer<Example> &item2) const
 {
-   return item1->name.compare(item2->name, Qt::CaseInsensitive);
+   return StringCompare::compareNoCase(item1->name, item2->name);
 }
 
 int GroupSDict::compareMapValues(const QSharedPointer<GroupDef> &item1, const QSharedPointer<GroupDef> &item2) const
@@ -54,7 +54,7 @@ int GroupSDict::compareMapValues(const QSharedPointer<GroupDef> &item1, const QS
 int IndexFieldSDict::compareMapValues(const QSharedPointer<IndexField> &item1,
                   const QSharedPointer<IndexField> &item2) const
 {
-   return item1->name.compare(item2->name, Qt::CaseInsensitive);
+   return StringCompare::compareNoCase(item1->name, item2->name);
 }
 
 int MemberGroupSDict::compareMapValues(const QSharedPointer<MemberGroup> &item1, const QSharedPointer<MemberGroup> &item2) const {
@@ -64,12 +64,12 @@ int MemberGroupSDict::compareMapValues(const QSharedPointer<MemberGroup> &item1,
 int MemberNameInfoSDict::compareMapValues(const QSharedPointer<MemberNameInfo> &item1,
                   const QSharedPointer<MemberNameInfo> &item2) const
 {
-   return item1->memberName().compare(item2->memberName(), Qt::CaseInsensitive );
+   return StringCompare::compareNoCase(item1->memberName(), item2->memberName());
 }
 
 int PageSDict::compareMapValues(const QSharedPointer<PageDef> &i1, const QSharedPointer<PageDef> &i2) const
 {
-   return i1->name().compare(i2->name(), Qt::CaseInsensitive);
+   return StringCompare::compareNoCase(i1->name(), i2->name());
 }
 
 void SearchIndexMap ::insertDef(QSharedPointer<Definition> d)
@@ -95,7 +95,7 @@ int SearchIndexMap::compareMapValues(const QSharedPointer<SearchDefinitionList> 
    QString n1 = md1->first()->localName();
    QString n2 = md2->first()->localName();
 
-   return n1.compare(n2, Qt::CaseInsensitive);
+   return StringCompare::compareNoCase(n1, n2);
 }
 
 

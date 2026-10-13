@@ -19,6 +19,7 @@
 *
 *************************************************************************/
 
+#include <stringmap.h>
 #include <sortedlist.h>
 
 #include <classdef.h>
@@ -42,7 +43,7 @@ int compareListValues(const BaseClassDef *item1, const BaseClassDef *item2, bool
       return false;
 
    } else {
-      return c1->name().compare(c2->name(), Qt::CaseInsensitive);
+      return StringCompare::compareNoCase(c1->name(), c2->name());
    }
 }
 
@@ -53,10 +54,10 @@ int compareListValues(const QSharedPointer<ClassDef> item1, const QSharedPointer
    static bool b = Config::getBool("sort-by-scope-name");
 
    if (b) {
-      return item1->name().compare(item2->name(), Qt::CaseInsensitive);
+      return StringCompare::compareNoCase(item1->name(), item2->name());
 
    } else {
-      return item1->className().compare(item2->className(), Qt::CaseInsensitive);
+      return StringCompare::compareNoCase(item1->className(), item2->className());
 
    }
 }
@@ -66,7 +67,7 @@ int compareListValues(const QSharedPointer<ClassDef> item1, const QSharedPointer
 int compareListValues(const QSharedPointer<DirDef> &item1, const QSharedPointer<DirDef> &item2, bool flag)
 {
    (void) flag;
-   return item1->shortName().compare(item2->shortName(), Qt::CaseInsensitive);
+   return StringCompare::compareNoCase(item1->shortName(), item2->shortName());
 }
 
 
@@ -74,7 +75,7 @@ int compareListValues(const QSharedPointer<DirDef> &item1, const QSharedPointer<
 int compareListValues(const DotNode *item1, const DotNode *item2, bool flag)
 {
    (void) flag;
-   return item1->label().compare(item2->label(), Qt::CaseInsensitive);
+   return StringCompare::compareNoCase(item1->label(), item2->label());
 }
 
 
@@ -83,9 +84,9 @@ int compareListValues(const DotNode *item1, const DotNode *item2, bool flag)
 int compareListValues(const QSharedPointer<FileDef> &item1, const QSharedPointer<FileDef> &item2, bool flag)
 {
    if (flag) {
-      return item1->fileName().compare(item2->fileName(), Qt::CaseInsensitive);
+      return StringCompare::compareNoCase(item1->fileName(), item2->fileName());
    } else {
-      return item1->name().compare(item2->name(), Qt::CaseInsensitive);
+      return StringCompare::compareNoCase(item1->name(), item2->name());
    }
 }
 
@@ -97,10 +98,10 @@ int compareListValues(const QSharedPointer<FileNameList> &item1, const QSharedPo
    int retval;
 
    if (Config::getBool("full-path-names")) {
-      retval = item1->fullName().compare(item2->fullName(), Qt::CaseInsensitive);
+      retval = StringCompare::compareNoCase(item1->fullName(), item2->fullName());
 
    } else {
-      retval = item1->fileName().compare(item2->fileName(), Qt::CaseInsensitive);
+      retval = StringCompare::compareNoCase(item1->fileName(), item2->fileName());
 
    }
 
@@ -135,10 +136,10 @@ int compareListValues(const QSharedPointer<MemberDef> &c1, const QSharedPointer<
       }
    }
 
-   int cmp = c1->name().compare(c2->name(), Qt::CaseInsensitive );
+   int cmp = StringCompare::compareNoCase(c1->name(), c2->name());
 
    if (cmp == 0) {
-      cmp = c1->argsString().compare(c2->argsString(), Qt::CaseInsensitive );
+      cmp = StringCompare::compareNoCase(c1->argsString(), c2->argsString());
    }
 
    return cmp != 0 ? cmp : c1->getDefLine() - c2->getDefLine();

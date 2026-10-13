@@ -19,6 +19,7 @@
 *
 *************************************************************************/
 
+#include <stringmap.h>
 #include <namespacedef.h>
 
 #include <classdef.h>
@@ -987,7 +988,7 @@ void NamespaceDef::combineUsingRelations()
 
 int NamespaceSDict::compareMapValues(const QSharedPointer<NamespaceDef> &item1, const QSharedPointer<NamespaceDef> &item2) const
 {
-   return item1->name().compare(item2->name(), Qt::CaseInsensitive);
+   return StringCompare::compareNoCase(item1->name(), item2->name());
 }
 
 bool NamespaceSDict::declVisible() const

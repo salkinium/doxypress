@@ -19,6 +19,7 @@
 *
 *************************************************************************/
 
+#include <stringmap.h>
 #include <memberlist.h>
 
 #include <config.h>
@@ -1132,7 +1133,7 @@ void MemberList::writeTagFile(QTextStream &tagFile)
 
 int MemberSDict::compareMapValues(const QSharedPointer<MemberDef> &c1, const QSharedPointer<MemberDef> &c2) const
 {
-   int cmp = c1->name().compare(c2->name(), Qt::CaseInsensitive);
+   int cmp = StringCompare::compareNoCase(c1->name(), c2->name());
 
    if (cmp) {
       return cmp;
