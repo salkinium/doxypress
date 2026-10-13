@@ -127,9 +127,19 @@ static bool extraChar(const QChar &text)
 // returns 0 if no newline is found, or the number of characters that make up the newline if found.
 static int isNewline(const QStringView data)
 {
-   // normal newline
-   if (data.startsWith('\n')) {
+   // called for every character, do not build strings unless a backslash starts the text
+   if (data.isEmpty()) {
+      return 0;
+   }
+
+   const QChar first = *data.constBegin();
+
+   if (first == '\n') {
       return 1;
+   }
+
+   if (first != '\\') {
+      return 0;
    }
 
    // artificial new line from ^^ in ALIASES
