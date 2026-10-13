@@ -1614,7 +1614,27 @@ QString removeAllWhiteSpace(const QString &str)
 static const char constScope[]   = { 'c', 'o', 'n', 's', 't', ':' };
 static const char virtualScope[] = { 'v', 'i', 'r', 't', 'u', 'a', 'l', ':' };
 
+static QString removeRedundantWhiteSpace_internal(const QString &str_x, bool makePretty);
+
+// perf: pure function which is called with the same type strings over and over
 QString removeRedundantWhiteSpace(const QString &str_x, bool makePretty)
+{
+   static QHash<QString, QString> s_cache[2];
+   auto &cache = s_cache[makePretty ? 1 : 0];
+
+   auto iter = cache.find(str_x);
+
+   if (iter != cache.end()) {
+      return iter.value();
+   }
+
+   QString retval = removeRedundantWhiteSpace_internal(str_x, makePretty);
+   cache.insert(str_x, retval);
+
+   return retval;
+}
+
+static QString removeRedundantWhiteSpace_internal(const QString &str_x, bool makePretty)
 {
    static bool cliSupport = Config::getBool("cpp-cli-support");
 
@@ -7920,13 +7940,24 @@ bool patternMatch(const QFileInfo &fi, const QStringList &patList)
             pattern = pattern.left(i);   // strip off the extension
          }
 
-         if (ignoreCase == Qt::CaseInsensitive) {
-            regExp = QRegularExpression(pattern, QPatternOption::CaseInsensitiveOption | QPatternOption::WildcardOption |
-                  QPatternOption::ExactMatchOption);
+         // perf: compile every pattern once
+         static QHash<QString, QRegularExpression> s_patternCache;
+         auto iterCache = s_patternCache.find(pattern);
 
-         } else  {
-            regExp = QRegularExpression(pattern, QPatternOption::WildcardOption | QPatternOption::ExactMatchOption);
+         if (iterCache == s_patternCache.end()) {
+            if (ignoreCase == Qt::CaseInsensitive) {
+               regExp = QRegularExpression(pattern, QPatternOption::CaseInsensitiveOption | QPatternOption::WildcardOption |
+                     QPatternOption::ExactMatchOption);
 
+            } else  {
+               regExp = QRegularExpression(pattern, QPatternOption::WildcardOption | QPatternOption::ExactMatchOption);
+
+            }
+
+            s_patternCache.insert(pattern, regExp);
+
+         } else {
+            regExp = iterCache.value();
          }
 
          // input-patterns

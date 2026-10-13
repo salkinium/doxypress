@@ -114,7 +114,25 @@ class StringCompare {
             return 0;
          }
 
-         // remaining text can contain non ASCII characters which fold to nothing or to ASCII
+         // perf: one string is a prefix of the other, only fall back when the remaining text is not ASCII
+         // since non ASCII characters can fold to nothing
+         {
+            auto iterR = (iterA == endA) ? iterB : iterA;
+            const auto endR = (iterA == endA) ? endB : endA;
+            bool ascii = true;
+
+            for (; iterR != endR; ++iterR) {
+               if (static_cast<unsigned char>(*iterR) >= 0x80) {
+                  ascii = false;
+                  break;
+               }
+            }
+
+            if (ascii) {
+               return (iterA == endA) ? -1 : 1;
+            }
+         }
+
          return a.compare(b, Qt::CaseInsensitive);
       }
 

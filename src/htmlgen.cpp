@@ -188,8 +188,39 @@ static QString removeEmptyLines(const QString &s)
    return retval;
 }
 
+static QString substituteHtmlKeywords_internal(const QString &output, const QString &title,
+      const QString &relPath, const QString &navPath);
+
+// perf: only the title and the navigation path differ between pages, everything else is substituted once
+// per template and relative path. Date and time keywords keep the value of the first page.
 static QString substituteHtmlKeywords(const QString &output, const QString &title,
       const QString &relPath = QString(), const QString &navPath = QString())
+{
+   static const QString titleMark = "@@DoxyPressTitle@@";
+   static const QString navMark   = "@@DoxyPressNavPath@@";
+
+   if (title.isEmpty() || title.contains('$') || navPath.contains('$') || title.contains("@@") || navPath.contains("@@")) {
+      return substituteHtmlKeywords_internal(output, title, relPath, navPath);
+   }
+
+   static QHash<QString, QString> s_cache;
+
+   const QString key = QString::number(reinterpret_cast<quintptr>(&output)) + "|" + QString::number(output.size_storage()) + "|" + relPath;
+   auto iter = s_cache.find(key);
+
+   if (iter == s_cache.end()) {
+      iter = s_cache.insert(key, substituteHtmlKeywords_internal(output, titleMark, relPath, navMark));
+   }
+
+   QString result = iter.value();
+   result.replace(titleMark, convertToHtml(title));
+   result.replace(navMark, navPath);
+
+   return result;
+}
+
+static QString substituteHtmlKeywords_internal(const QString &output, const QString &title,
+      const QString &relPath, const QString &navPath)
 {
    // Build CSS/Javascript tags depending on treeview, search engine settings
 
