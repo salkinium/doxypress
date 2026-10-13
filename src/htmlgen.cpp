@@ -210,11 +210,15 @@ static QString substituteHtmlKeywords(const QString &output, const QString &titl
 
    static QHash<QString, QString> s_cache;
 
-   const QString key = QString::number(reinterpret_cast<quintptr>(&output)) + "|" + QString::number(output.size_storage()) + "|" + relPath;
+   // an empty navigation path leaves an empty line which is removed, keep a separate entry for it
+   const bool hasNav = ! navPathDone.isEmpty();
+
+   const QString key = QString::number(reinterpret_cast<quintptr>(&output)) + "|" + QString::number(output.size_storage()) + "|" +
+         (hasNav ? "1|" : "0|") + relPath;
    auto iter = s_cache.find(key);
 
    if (iter == s_cache.end()) {
-      iter = s_cache.insert(key, substituteHtmlKeywords_internal(output, titleMark, relPath, navMark));
+      iter = s_cache.insert(key, substituteHtmlKeywords_internal(output, titleMark, relPath, hasNav ? navMark : QString()));
    }
 
    QString result = iter.value();
