@@ -199,7 +199,12 @@ static QString substituteHtmlKeywords(const QString &output, const QString &titl
    static const QString titleMark = "@@DoxyPressTitle@@";
    static const QString navMark   = "@@DoxyPressNavPath@@";
 
-   if (title.isEmpty() || title.contains('$') || navPath.contains('$') || title.contains("@@") || navPath.contains("@@")) {
+   // the navigation path relies on the relative path being substituted after it was inserted
+   QString navPathDone = navPath;
+   navPathDone.replace("$relpath$", relPath);
+   navPathDone.replace("$relpath^", relPath);
+
+   if (title.isEmpty() || title.contains('$') || navPathDone.contains('$') || title.contains("@@") || navPathDone.contains("@@")) {
       return substituteHtmlKeywords_internal(output, title, relPath, navPath);
    }
 
@@ -214,7 +219,7 @@ static QString substituteHtmlKeywords(const QString &output, const QString &titl
 
    QString result = iter.value();
    result.replace(titleMark, convertToHtml(title));
-   result.replace(navMark, navPath);
+   result.replace(navMark, navPathDone);
 
    return result;
 }

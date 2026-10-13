@@ -19,6 +19,7 @@
 *
 *************************************************************************/
 
+#include <algorithm>
 #include <ftvhelp.h>
 
 #include <config.h>
@@ -637,11 +638,11 @@ static bool generateJSTree(SortedList<NavIndexEntry *> &navIndex, QTextStream &t
                bool src = srcFileVisibleInIndex(fd);
 
                if (node->category == DirType::File && doc) {
-                  navIndex.inSort(new NavIndexEntry(node2URL(node, true, false), pathToNode(node)));
+                  navIndex.append(new NavIndexEntry(node2URL(node, true, false), pathToNode(node)));
                }
 
                if (node->category == DirType::FileSource && src) {
-                  navIndex.inSort(new NavIndexEntry(node2URL(node, true, true), pathToNode(node)));
+                  navIndex.append(new NavIndexEntry(node2URL(node, true, true), pathToNode(node)));
                }
             }
 
@@ -651,7 +652,7 @@ static bool generateJSTree(SortedList<NavIndexEntry *> &navIndex, QTextStream &t
                // do not add this file to the navIndex
 
             } else {
-               navIndex.inSort(new NavIndexEntry(node2URL(node), pathToNode(node)));
+               navIndex.append(new NavIndexEntry(node2URL(node), pathToNode(node)));
 
             }
          }
@@ -801,16 +802,22 @@ static void generateJSNavTree(QList<FTVNode *> &nodeList)
       t << "\"index" << Doxy_Globals::htmlFileExtension << "\", ";
 
       // add one special entry for index page
-      navIndex.inSort(new NavIndexEntry("index" + Doxy_Globals::htmlFileExtension, QString()));
+      navIndex.append(new NavIndexEntry("index" + Doxy_Globals::htmlFileExtension, QString()));
 
       // add one special entry for related pages, written as a child of index.html
-      navIndex.inSort(new NavIndexEntry("pages" + Doxy_Globals::htmlFileExtension, QString()));
+      navIndex.append(new NavIndexEntry("pages" + Doxy_Globals::htmlFileExtension, QString()));
 
       // adjust for display output
       reSortNodes(nodeList);
 
       bool omitComma = true;
       generateJSTree(navIndex, t, nodeList, 1, omitComma);
+
+      // perf: entries were appended, sort once. inSort() placed an entry in front of existing entries
+      // with the same url, reversing first keeps that order
+      std::reverse(navIndex.begin(), navIndex.end());
+      std::stable_sort(navIndex.begin(), navIndex.end(),
+            [](const NavIndexEntry *a, const NavIndexEntry *b) { return a->m_url.compare(b->m_url) < 0; });
 
       if (omitComma) {
          t << "]" << endl;
